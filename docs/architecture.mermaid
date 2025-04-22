@@ -1,0 +1,29 @@
+graph TD
+subgraph Frameworks and Drivers
+Infrastructure[infrastructure<br>db, cache, grpc, http, message_publisher, search_db]
+Routing[routing<br>consumer_router, grpc_router, http_router]
+end
+
+subgraph Interface Adapters
+Adapters[adapters<br>controllers, grpc, http, dto, gateways]
+end
+
+subgraph Application Core
+UseCases[use_cases]
+Interfaces[interfaces<br>db, cache, grpc, http, search_db]
+Entities[entities]
+end
+
+%% Dependency Flow (Dependencies point inward)
+Infrastructure -->|Implements| Interfaces
+Routing -->|Depends on| Adapters
+Adapters -->|Depends on| UseCases
+Adapters -->|Implements| Interfaces
+UseCases -->|Depends on| Entities
+UseCases -->|Depends on| Interfaces
+
+%% Data Flow (Request flows inward, Response flows outward)
+Routing -->|Request| Adapters -->|Request| UseCases -->|Request| Entities
+Entities -->|Response| UseCases -->|Response| Adapters -->|Response| Routing
+UseCases -->|Request| Interfaces -->|Request| Infrastructure
+Infrastructure -->|Response| Interfaces -->|Response| UseCases
