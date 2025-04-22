@@ -95,10 +95,10 @@ func Run(cfg *configs.Config) {
 	httpServer.App.Use(middlewares.RecoveryMiddleware(l))
 
 	// Initialize HTTP routers
-	http_router.Register(httpServer.App, pgClient, redisClient, esClient)
+	http_router.Register(l, httpServer.App, pgClient, redisClient, esClient)
 
 	// Initialize message consumers
-	consumer_router.Register(l, rmqClient)
+	consumer_router.Register(l, rmqClient, pgClient, redisClient, esClient)
 
 	// Start server
 	httpServer.Start()

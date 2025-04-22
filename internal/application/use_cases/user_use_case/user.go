@@ -1,6 +1,7 @@
 package user_use_case
 
 import (
+	"context"
 	"site_builder_backend/internal/interfaces/db/repositories/user_repo_inter"
 )
 
@@ -17,4 +18,12 @@ func (u *UserUseCase) CreateUser() {
 	if err != nil {
 		return
 	}
+}
+
+// SendSms sends an SMS to the specified phone number with the given message
+func (u *UserUseCase) SendSms(ctx context.Context, phone, message string) error {
+	// Here you would implement the actual SMS sending logic
+	// This could involve calling an external SMS service or updating a database
+	// For now, this is just a placeholder
+	return nil
 }
