@@ -60,9 +60,9 @@ func Iteratee(value interface{}) func(interface{}) bool {
 			return obj != nil
 		}
 	}
-	
+
 	val := reflect.ValueOf(value)
-	
+
 	// If it's a function, return it
 	if val.Kind() == reflect.Func {
 		return func(obj interface{}) bool {
@@ -74,16 +74,16 @@ func Iteratee(value interface{}) func(interface{}) bool {
 			return false
 		}
 	}
-	
+
 	// If it's a map, check if the object matches the properties
 	if val.Kind() == reflect.Map {
 		return func(obj interface{}) bool {
 			objVal := reflect.ValueOf(obj)
-			
+
 			for _, key := range val.MapKeys() {
 				if key.Kind() == reflect.String {
 					keyStr := key.String()
-					
+
 					var objValue interface{}
 					if objVal.Kind() == reflect.Map {
 						mapVal := objVal.MapIndex(key)
@@ -100,23 +100,23 @@ func Iteratee(value interface{}) func(interface{}) bool {
 					} else {
 						return false
 					}
-					
+
 					// Check if the values are equal
 					if !reflect.DeepEqual(objValue, val.MapIndex(key).Interface()) {
 						return false
 					}
 				}
 			}
-			
+
 			return true
 		}
 	}
-	
+
 	// If it's a string, return a function that checks if the object has that property
 	if val.Kind() == reflect.String {
 		return func(obj interface{}) bool {
 			objVal := reflect.ValueOf(obj)
-			
+
 			if objVal.Kind() == reflect.Map {
 				mapVal := objVal.MapIndex(val)
 				return mapVal.IsValid()
@@ -124,11 +124,11 @@ func Iteratee(value interface{}) func(interface{}) bool {
 				field := objVal.FieldByName(val.String())
 				return field.IsValid()
 			}
-			
+
 			return false
 		}
 	}
-	
+
 	// For other types, check for equality
 	return func(obj interface{}) bool {
 		return reflect.DeepEqual(obj, value)
@@ -138,11 +138,11 @@ func Iteratee(value interface{}) func(interface{}) bool {
 // UniqueId returns a unique ID with an optional prefix
 func UniqueId(prefix ...string) string {
 	id := time.Now().UnixNano()
-	
+
 	if len(prefix) > 0 {
 		return prefix[0] + "_" + string(id)
 	}
-	
+
 	return string(id)
 }
 
@@ -159,7 +159,7 @@ func Unescape(str string) string {
 // Result extracts the value of a property from an object
 func Result(obj interface{}, property string, defaultValue ...interface{}) interface{} {
 	val := reflect.ValueOf(obj)
-	
+
 	if val.Kind() == reflect.Map {
 		propVal := val.MapIndex(reflect.ValueOf(property))
 		if propVal.IsValid() {
@@ -178,7 +178,7 @@ func Result(obj interface{}, property string, defaultValue ...interface{}) inter
 		if field.IsValid() && field.CanInterface() {
 			return field.Interface()
 		}
-		
+
 		method := val.MethodByName(property)
 		if method.IsValid() {
 			result := method.Call([]reflect.Value{})
@@ -187,12 +187,12 @@ func Result(obj interface{}, property string, defaultValue ...interface{}) inter
 			}
 		}
 	}
-	
+
 	// Return the default value if provided
 	if len(defaultValue) > 0 {
 		return defaultValue[0]
 	}
-	
+
 	return nil
 }
 
@@ -209,7 +209,7 @@ func Template(text string, settings ...map[string]interface{}) func(map[string]i
 		"escape":      "{{-(.+?)}}",
 		"evaluate":    "{{=(.+?)}}",
 	}
-	
+
 	// Override with user settings
 	if len(settings) > 0 {
 		for key, value := range settings[0] {
@@ -218,30 +218,30 @@ func Template(text string, settings ...map[string]interface{}) func(map[string]i
 			}
 		}
 	}
-	
+
 	// Replace template tags with Go template syntax
 	processedText := text
-	
+
 	// Replace evaluate tags
 	processedText = strings.ReplaceAll(processedText, templateSettings["evaluate"], "{{$1}}")
-	
+
 	// Replace escape tags
 	processedText = strings.ReplaceAll(processedText, templateSettings["escape"], "{{html $1}}")
-	
+
 	// Replace interpolate tags
 	processedText = strings.ReplaceAll(processedText, templateSettings["interpolate"], "{{$1}}")
-	
+
 	// Compile the template
 	tmpl, err := template.New("underscore").Funcs(template.FuncMap{
 		"html": template.HTMLEscapeString,
 	}).Parse(processedText)
-	
+
 	if err != nil {
 		return func(map[string]interface{}) string {
 			return err.Error()
 		}
 	}
-	
+
 	return func(data map[string]interface{}) string {
 		var buf bytes.Buffer
 		err := tmpl.Execute(&buf, data)
@@ -250,4 +250,4 @@ func Template(text string, settings ...map[string]interface{}) func(map[string]i
 		}
 		return buf.String()
 	}
-} 
+}

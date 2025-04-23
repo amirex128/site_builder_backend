@@ -13,32 +13,32 @@ import (
 // Keys returns all the keys of an object
 func Keys(obj interface{}) []string {
 	val := reflect.ValueOf(obj)
-	
+
 	if val.Kind() == reflect.Map {
 		keys := val.MapKeys()
 		result := make([]string, 0, len(keys))
-		
+
 		for _, key := range keys {
 			if key.Kind() == reflect.String {
 				result = append(result, key.String())
 			}
 		}
-		
+
 		return result
 	} else if val.Kind() == reflect.Struct {
 		typ := val.Type()
 		result := make([]string, 0, typ.NumField())
-		
+
 		for i := 0; i < typ.NumField(); i++ {
 			field := typ.Field(i)
 			if field.IsExported() {
 				result = append(result, field.Name)
 			}
 		}
-		
+
 		return result
 	}
-	
+
 	return []string{}
 }
 
@@ -47,59 +47,59 @@ func AllKeys(obj interface{}) []string {
 	// In Go, there's no direct equivalent to JavaScript's prototype chain
 	// So we'll just return all keys, including unexported ones for structs
 	val := reflect.ValueOf(obj)
-	
+
 	if val.Kind() == reflect.Map {
 		keys := val.MapKeys()
 		result := make([]string, 0, len(keys))
-		
+
 		for _, key := range keys {
 			if key.Kind() == reflect.String {
 				result = append(result, key.String())
 			}
 		}
-		
+
 		return result
 	} else if val.Kind() == reflect.Struct {
 		typ := val.Type()
 		result := make([]string, 0, typ.NumField())
-		
+
 		for i := 0; i < typ.NumField(); i++ {
 			field := typ.Field(i)
 			result = append(result, field.Name)
 		}
-		
+
 		return result
 	}
-	
+
 	return []string{}
 }
 
 // Values returns all the values of an object
 func Values(obj interface{}) []interface{} {
 	val := reflect.ValueOf(obj)
-	
+
 	if val.Kind() == reflect.Map {
 		keys := val.MapKeys()
 		result := make([]interface{}, 0, len(keys))
-		
+
 		for _, key := range keys {
 			result = append(result, val.MapIndex(key).Interface())
 		}
-		
+
 		return result
 	} else if val.Kind() == reflect.Struct {
 		result := make([]interface{}, 0, val.NumField())
-		
+
 		for i := 0; i < val.NumField(); i++ {
 			field := val.Field(i)
 			if field.CanInterface() {
 				result = append(result, field.Interface())
 			}
 		}
-		
+
 		return result
 	}
-	
+
 	return []interface{}{}
 }
 
@@ -107,7 +107,7 @@ func Values(obj interface{}) []interface{} {
 func MapObject(obj interface{}, iteratee func(value interface{}, key string, obj interface{}) interface{}) map[string]interface{} {
 	val := reflect.ValueOf(obj)
 	result := make(map[string]interface{})
-	
+
 	if val.Kind() == reflect.Map {
 		for _, key := range val.MapKeys() {
 			if key.Kind() == reflect.String {
@@ -129,30 +129,30 @@ func MapObject(obj interface{}, iteratee func(value interface{}, key string, obj
 			}
 		}
 	}
-	
+
 	return result
 }
 
 // Pairs converts an object into a list of [key, value] pairs
 func Pairs(obj interface{}) [][]interface{} {
 	val := reflect.ValueOf(obj)
-	
+
 	if val.Kind() == reflect.Map {
 		keys := val.MapKeys()
 		result := make([][]interface{}, 0, len(keys))
-		
+
 		for _, key := range keys {
 			if key.Kind() == reflect.String {
 				pair := []interface{}{key.String(), val.MapIndex(key).Interface()}
 				result = append(result, pair)
 			}
 		}
-		
+
 		return result
 	} else if val.Kind() == reflect.Struct {
 		typ := val.Type()
 		result := make([][]interface{}, 0, val.NumField())
-		
+
 		for i := 0; i < typ.NumField(); i++ {
 			field := typ.Field(i)
 			if field.IsExported() {
@@ -163,10 +163,10 @@ func Pairs(obj interface{}) [][]interface{} {
 				}
 			}
 		}
-		
+
 		return result
 	}
-	
+
 	return [][]interface{}{}
 }
 
@@ -174,7 +174,7 @@ func Pairs(obj interface{}) [][]interface{} {
 func Invert(obj interface{}) map[string]string {
 	val := reflect.ValueOf(obj)
 	result := make(map[string]string)
-	
+
 	if val.Kind() == reflect.Map {
 		for _, key := range val.MapKeys() {
 			if key.Kind() == reflect.String {
@@ -199,7 +199,7 @@ func Invert(obj interface{}) map[string]string {
 			}
 		}
 	}
-	
+
 	return result
 }
 
@@ -208,7 +208,7 @@ func Invert(obj interface{}) map[string]string {
 func Create(prototype interface{}, properties map[string]interface{}) map[string]interface{} {
 	// Create a new object with the properties from the prototype
 	result := make(map[string]interface{})
-	
+
 	// Copy properties from the prototype
 	protoVal := reflect.ValueOf(prototype)
 	if protoVal.Kind() == reflect.Map {
@@ -229,12 +229,12 @@ func Create(prototype interface{}, properties map[string]interface{}) map[string
 			}
 		}
 	}
-	
+
 	// Add the new properties
 	for key, value := range properties {
 		result[key] = value
 	}
-	
+
 	return result
 }
 
@@ -242,7 +242,7 @@ func Create(prototype interface{}, properties map[string]interface{}) map[string
 func Functions(obj interface{}) []string {
 	val := reflect.ValueOf(obj)
 	result := make([]string, 0)
-	
+
 	if val.Kind() == reflect.Struct || val.Kind() == reflect.Ptr {
 		typ := val.Type()
 		for i := 0; i < typ.NumMethod(); i++ {
@@ -250,7 +250,7 @@ func Functions(obj interface{}) []string {
 			result = append(result, method.Name)
 		}
 	}
-	
+
 	sort.Strings(result)
 	return result
 }
@@ -258,7 +258,7 @@ func Functions(obj interface{}) []string {
 // FindKey returns the first key where the predicate returns true
 func FindKey(obj interface{}, predicate func(value interface{}, key string, obj interface{}) bool) (string, bool) {
 	val := reflect.ValueOf(obj)
-	
+
 	if val.Kind() == reflect.Map {
 		for _, key := range val.MapKeys() {
 			if key.Kind() == reflect.String {
@@ -284,21 +284,21 @@ func FindKey(obj interface{}, predicate func(value interface{}, key string, obj 
 			}
 		}
 	}
-	
+
 	return "", false
 }
 
 // Extend copies all properties from the source objects to the destination object
 func Extend(destination interface{}, sources ...interface{}) {
 	destVal := reflect.ValueOf(destination)
-	
+
 	// Only works if destination is a pointer to a map or struct
 	if destVal.Kind() != reflect.Ptr {
 		return
 	}
-	
+
 	destVal = destVal.Elem()
-	
+
 	if destVal.Kind() == reflect.Map {
 		// For maps, we can directly set values
 		for _, source := range sources {
@@ -367,13 +367,13 @@ func ExtendOwn(destination interface{}, sources ...interface{}) {
 func Pick(obj interface{}, keys ...string) map[string]interface{} {
 	val := reflect.ValueOf(obj)
 	result := make(map[string]interface{})
-	
+
 	// Create a set of keys for faster lookup
 	keySet := make(map[string]bool)
 	for _, key := range keys {
 		keySet[key] = true
 	}
-	
+
 	if val.Kind() == reflect.Map {
 		for _, key := range val.MapKeys() {
 			if key.Kind() == reflect.String {
@@ -395,7 +395,7 @@ func Pick(obj interface{}, keys ...string) map[string]interface{} {
 			}
 		}
 	}
-	
+
 	return result
 }
 
@@ -403,13 +403,13 @@ func Pick(obj interface{}, keys ...string) map[string]interface{} {
 func Omit(obj interface{}, keys ...string) map[string]interface{} {
 	val := reflect.ValueOf(obj)
 	result := make(map[string]interface{})
-	
+
 	// Create a set of keys for faster lookup
 	keySet := make(map[string]bool)
 	for _, key := range keys {
 		keySet[key] = true
 	}
-	
+
 	if val.Kind() == reflect.Map {
 		for _, key := range val.MapKeys() {
 			if key.Kind() == reflect.String {
@@ -431,21 +431,21 @@ func Omit(obj interface{}, keys ...string) map[string]interface{} {
 			}
 		}
 	}
-	
+
 	return result
 }
 
 // Defaults fills in undefined properties in object with values from the defaults objects
 func Defaults(obj interface{}, defaults ...interface{}) {
 	objVal := reflect.ValueOf(obj)
-	
+
 	// Only works if obj is a pointer to a map or struct
 	if objVal.Kind() != reflect.Ptr {
 		return
 	}
-	
+
 	objVal = objVal.Elem()
-	
+
 	if objVal.Kind() == reflect.Map {
 		// For maps, we can directly set values
 		for _, defaultObj := range defaults {
@@ -519,41 +519,41 @@ func Defaults(obj interface{}, defaults ...interface{}) {
 // Clone creates a shallow copy of the object
 func Clone(obj interface{}) interface{} {
 	val := reflect.ValueOf(obj)
-	
+
 	if val.Kind() == reflect.Map {
 		// Create a new map of the same type
 		mapType := val.Type()
 		newMap := reflect.MakeMap(mapType)
-		
+
 		// Copy all key-value pairs
 		for _, key := range val.MapKeys() {
 			newMap.SetMapIndex(key, val.MapIndex(key))
 		}
-		
+
 		return newMap.Interface()
 	} else if val.Kind() == reflect.Struct {
 		// Create a new struct of the same type
 		newStruct := reflect.New(val.Type()).Elem()
-		
+
 		// Copy all fields
 		for i := 0; i < val.NumField(); i++ {
 			if newStruct.Field(i).CanSet() {
 				newStruct.Field(i).Set(val.Field(i))
 			}
 		}
-		
+
 		return newStruct.Interface()
 	} else if val.Kind() == reflect.Slice || val.Kind() == reflect.Array {
 		// Create a new slice of the same type
 		sliceType := val.Type()
 		newSlice := reflect.MakeSlice(sliceType, val.Len(), val.Cap())
-		
+
 		// Copy all elements
 		reflect.Copy(newSlice, val)
-		
+
 		return newSlice.Interface()
 	}
-	
+
 	// For other types, just return the value
 	return obj
 }
@@ -577,14 +577,14 @@ func ToPath(path string) []string {
 func Has(obj interface{}, path string) bool {
 	val := reflect.ValueOf(obj)
 	segments := ToPath(path)
-	
+
 	if len(segments) == 0 {
 		return false
 	}
-	
+
 	// Check only the first segment for direct property
 	segment := segments[0]
-	
+
 	if val.Kind() == reflect.Map {
 		for _, key := range val.MapKeys() {
 			if key.Kind() == reflect.String && key.String() == segment {
@@ -595,7 +595,7 @@ func Has(obj interface{}, path string) bool {
 		field := val.FieldByName(segment)
 		return field.IsValid()
 	}
-	
+
 	return false
 }
 
@@ -603,7 +603,7 @@ func Has(obj interface{}, path string) bool {
 func Get(obj interface{}, path string) interface{} {
 	val := reflect.ValueOf(obj)
 	segments := ToPath(path)
-	
+
 	for _, segment := range segments {
 		if val.Kind() == reflect.Map {
 			val = val.MapIndex(reflect.ValueOf(segment))
@@ -627,11 +627,11 @@ func Get(obj interface{}, path string) interface{} {
 			return nil
 		}
 	}
-	
+
 	if !val.CanInterface() {
 		return nil
 	}
-	
+
 	return val.Interface()
 }
 
@@ -653,10 +653,10 @@ func PropertyOf(obj interface{}) func(path string) interface{} {
 func Matcher(attrs map[string]interface{}) func(obj interface{}) bool {
 	return func(obj interface{}) bool {
 		val := reflect.ValueOf(obj)
-		
+
 		for key, attrValue := range attrs {
 			var objValue interface{}
-			
+
 			if val.Kind() == reflect.Map {
 				mapVal := val.MapIndex(reflect.ValueOf(key))
 				if !mapVal.IsValid() {
@@ -672,13 +672,13 @@ func Matcher(attrs map[string]interface{}) func(obj interface{}) bool {
 			} else {
 				return false
 			}
-			
+
 			// Check if the values are equal
 			if !reflect.DeepEqual(objValue, attrValue) {
 				return false
 			}
 		}
-		
+
 		return true
 	}
 }
@@ -696,7 +696,7 @@ func IsMatch(obj interface{}, attrs map[string]interface{}) bool {
 // IsEmpty checks if an object is empty
 func IsEmpty(obj interface{}) bool {
 	val := reflect.ValueOf(obj)
-	
+
 	switch val.Kind() {
 	case reflect.Array, reflect.Chan, reflect.Map, reflect.Slice, reflect.String:
 		return val.Len() == 0
@@ -711,7 +711,7 @@ func IsEmpty(obj interface{}) bool {
 	case reflect.Interface, reflect.Ptr:
 		return val.IsNil()
 	}
-	
+
 	return false
 }
 
@@ -732,7 +732,7 @@ func IsObject(obj interface{}) bool {
 	if obj == nil {
 		return false
 	}
-	
+
 	val := reflect.ValueOf(obj)
 	return val.Kind() == reflect.Map || val.Kind() == reflect.Struct || val.Kind() == reflect.Ptr
 }
@@ -879,4 +879,4 @@ func IsNull(obj interface{}) bool {
 func IsUndefined(obj interface{}) bool {
 	// Go doesn't have undefined, so this checks for nil
 	return obj == nil
-} 
+}
