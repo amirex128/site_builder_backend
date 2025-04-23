@@ -10,8 +10,8 @@ import (
 
 func UserRegister(c *rabbitmq.Client, db *postgres.Postgres) {
 	// Initialize repository, use case, and consumer
-	repo := user_repo.NewUserRepository(db.DB)
-	useCase := user_use_case.NewUserUseCase(repo)
+	repo := user_repo.NewUserRepository(db.DB, nil)
+	useCase := user_use_case.NewUserCommandUseCase(repo, nil, nil)
 	consumer := user_consumer.NewUserConsumer(useCase)
 
 	// Register SMS consumer

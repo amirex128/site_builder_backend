@@ -3,18 +3,25 @@ package user_use_case
 import (
 	"context"
 	"site_builder_backend/internal/interfaces/db/repositories/user_repo_inter"
+	"site_builder_backend/pkg/logger"
 )
 
 type UserUseCase struct {
-	userRepo user_repo_inter.UserRepository
+	userReadRepo  user_repo_inter.UserReadRepository
+	userWriteRepo user_repo_inter.UserWriteRepository
+	l             *logger.ZapLogger
 }
 
-func NewUserUseCase(userRepo user_repo_inter.UserRepository) *UserUseCase {
-	return &UserUseCase{userRepo: userRepo}
+func NewUserCommandUseCase(userReadRepo user_repo_inter.UserReadRepository, userWriteRepo user_repo_inter.UserWriteRepository, l *logger.ZapLogger) *UserUseCase {
+	return &UserUseCase{
+		userReadRepo:  userReadRepo,
+		userWriteRepo: userWriteRepo,
+		l:             l,
+	}
 }
 
 func (u *UserUseCase) CreateUser() {
-	err := u.userRepo.CreateUser()
+	err := u.userWriteRepo.Create()
 	if err != nil {
 		return
 	}

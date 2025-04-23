@@ -1,5 +1,8 @@
 package user_repo_inter
 
-type UserRepository interface {
-	CreateUser() error
+type UserReadRepository interface {
+	FindById() error
+}
+type UserWriteRepository interface {
+	Create() error
 }

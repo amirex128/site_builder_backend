@@ -2,14 +2,21 @@ package user_use_case
 
 import (
 	"site_builder_backend/internal/interfaces/db/repositories/user_repo_inter"
+	"site_builder_backend/pkg/logger"
 )
 
 type AddressUseCase struct {
-	addressRepo user_repo_inter.AddressRepository
+	addressReadRepo  user_repo_inter.AddressReadRepository
+	addressWriteRepo user_repo_inter.AddressWriteRepository
+	l                *logger.ZapLogger
 }
 
-func NewAddressUseCase(addressRepo user_repo_inter.AddressRepository) *AddressUseCase {
-	return &AddressUseCase{addressRepo: addressRepo}
+func NewAddressUseCase(addressReadRepo user_repo_inter.AddressReadRepository, addressWriteRepo user_repo_inter.AddressWriteRepository, l *logger.ZapLogger) *AddressUseCase {
+	return &AddressUseCase{
+		addressReadRepo:  addressReadRepo,
+		addressWriteRepo: addressWriteRepo,
+		l:                l,
+	}
 }
-func (u *AddressUseCase) CreateAddress() {
+func (u *AddressUseCase) Create() {
 }

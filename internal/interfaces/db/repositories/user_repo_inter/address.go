@@ -1,5 +1,8 @@
 package user_repo_inter
 
-type AddressRepository interface {
-	CreateAddress() error
+type AddressReadRepository interface {
+	FindById() error
+}
+type AddressWriteRepository interface {
+	Create() error
 }
