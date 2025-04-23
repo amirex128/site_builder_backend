@@ -12,7 +12,7 @@ type UserUseCase struct {
 	l             *logger.ZapLogger
 }
 
-func NewUserCommandUseCase(userReadRepo user_repo_inter.UserReadRepository, userWriteRepo user_repo_inter.UserWriteRepository, l *logger.ZapLogger) *UserUseCase {
+func NewUserUseCase(userReadRepo user_repo_inter.UserReadRepository, userWriteRepo user_repo_inter.UserWriteRepository, l *logger.ZapLogger) *UserUseCase {
 	return &UserUseCase{
 		userReadRepo:  userReadRepo,
 		userWriteRepo: userWriteRepo,
@@ -20,11 +20,16 @@ func NewUserCommandUseCase(userReadRepo user_repo_inter.UserReadRepository, user
 	}
 }
 
-func (u *UserUseCase) CreateUser() {
-	err := u.userWriteRepo.Create()
-	if err != nil {
-		return
-	}
+func (u *UserUseCase) LoginUserCommand() {
+
+}
+
+func (u *UserUseCase) RegisterUserCommand() {
+
+}
+
+func (u *UserUseCase) RefreshTokenCommand() {
+
 }
 
 // SendSms sends an SMS to the specified phone number with the given message

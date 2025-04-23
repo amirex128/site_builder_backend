@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GoImports">
+    <option name="excludedPackages">
+      <array>
+        <option value="site_builder_backend/internal/adapters/http/user_controller" />
+        <option value="site_builder_backend/internal/application/use_cases/user_use_case" />
+        <option value="site_builder_backend/internal/infrastructures/impl/db/mysql/user_repo" />
+        <option value="site_builder_backend/internal/infrastructures/impl/db/mysql/user_repo" />
+      </array>
+    </option>
+  </component>
+</project>

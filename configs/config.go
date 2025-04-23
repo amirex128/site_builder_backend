@@ -2,6 +2,7 @@ package configs
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/caarlos0/env/v11"
 )
@@ -18,6 +19,7 @@ type (
 		Elasticsearch Elasticsearch
 		Metrics       Metrics
 		Swagger       Swagger
+		JWT           JWT
 	}
 
 	// App -.
@@ -78,6 +80,15 @@ type (
 
 	Swagger struct {
 		Enabled bool `env:"SWAGGER_ENABLED" envDefault:"true"`
+	}
+
+	// JWT - JWT Authentication configuration
+	JWT struct {
+		AccessTokenSecret      string        `env:"JWT_ACCESS_TOKEN_SECRET,required"`
+		RefreshTokenSecret     string        `env:"JWT_REFRESH_TOKEN_SECRET,required"`
+		AccessTokenExpiration  time.Duration `env:"JWT_ACCESS_TOKEN_EXPIRATION" envDefault:"15m"`
+		RefreshTokenExpiration time.Duration `env:"JWT_REFRESH_TOKEN_EXPIRATION" envDefault:"720h"` // 30 days
+		Issuer                 string        `env:"JWT_ISSUER" envDefault:"site_builder_backend"`
 	}
 )
 

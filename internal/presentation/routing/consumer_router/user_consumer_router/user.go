@@ -3,19 +3,17 @@ package user_consumer_router
 import (
 	"site_builder_backend/internal/adapters/consumer/user_consumer"
 	"site_builder_backend/internal/application/use_cases/user_use_case"
-	"site_builder_backend/internal/infrastructures/impl/db/mysql/user_repo"
-	"site_builder_backend/pkg/postgres"
+	"site_builder_backend/internal/presentation/routing"
 	"site_builder_backend/pkg/rabbitmq"
 )
 
-func UserRegister(c *rabbitmq.Client, db *postgres.Postgres) {
+func UserRegister(client *rabbitmq.Client, services *routing.Services) {
 	// Initialize repository, use case, and consumer
-	repo := user_repo.NewUserRepository(db.DB, nil)
-	useCase := user_use_case.NewUserCommandUseCase(repo, nil, nil)
+	useCase := user_use_case.NewUserUseCase(services.UserReadRepo, nil, nil)
 	consumer := user_consumer.NewUserConsumer(useCase)
 
 	// Register SMS consumer
-	err := c.Exchange("user_exchange").
+	err := client.Exchange("user_exchange").
 		Queue("sms_queue").
 		Type("direct").
 		RoutingKey("user.sms").
